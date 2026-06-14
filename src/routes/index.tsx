@@ -1,29 +1,38 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { products } from "@/lib/products";
+import { ProductSlide } from "@/components/ProductSlide";
+import { TopNav } from "@/components/TopNav";
+import { BottomNav } from "@/components/BottomNav";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Your App" },
-      { name: "description", content: "Replace this with a one-sentence description of your app." },
-      { property: "og:title", content: "Your App" },
-      { property: "og:description", content: "Replace this with a one-sentence description of your app." },
+      { title: "LuckyDrop — Sorteios semanais de produtos premium" },
+      {
+        name: "description",
+        content:
+          "Concorra a motos, smartphones, relógios e mais toda semana. Adicione no carrinho, receba suas dezenas da sorte e pague via PIX ou cartão.",
+      },
+      { property: "og:title", content: "LuckyDrop — Sorteios semanais" },
+      {
+        property: "og:description",
+        content: "Sorteios semanais de produtos premium. Suas dezenas da sorte em segundos.",
+      },
     ],
   }),
-  component: Index,
+  component: Feed,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function Feed() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="bg-background text-foreground min-h-screen max-w-[430px] mx-auto relative overflow-hidden ring-1 ring-black/5">
+      <TopNav />
+      <main className="snap-y snap-mandatory h-screen overflow-y-scroll scrollbar-hide">
+        {products.map((p) => (
+          <ProductSlide key={p.id} product={p} />
+        ))}
+      </main>
+      <BottomNav />
     </div>
   );
 }

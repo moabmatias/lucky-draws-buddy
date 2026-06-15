@@ -15,7 +15,7 @@ export type Product = {
 
 export const products: Product[] = [
   {
-    id: "onyx-moto-r1",
+    id: "11111111-1111-1111-1111-111111111111",
     name: "ONYX MOTO R1",
     tagline: "Moto elétrica premium",
     image: moto,
@@ -24,7 +24,7 @@ export const products: Product[] = [
     drawDay: "SORTEIO SÁBADO",
   },
   {
-    id: "titan-chrono",
+    id: "22222222-2222-2222-2222-222222222222",
     name: "TITAN CHRONO",
     tagline: "Relógio titânio edição limitada",
     image: watch,
@@ -33,7 +33,7 @@ export const products: Product[] = [
     drawDay: "SORTEIO DOMINGO",
   },
   {
-    id: "phantom-phone",
+    id: "33333333-3333-3333-3333-333333333333",
     name: "PHANTOM 15 PRO",
     tagline: "Smartphone última geração",
     image: phone,
@@ -42,7 +42,7 @@ export const products: Product[] = [
     drawDay: "SORTEIO SEXTA",
   },
   {
-    id: "neon-cans",
+    id: "44444444-4444-4444-4444-444444444444",
     name: "NEON CANS XL",
     tagline: "Fone wireless noise cancelling",
     image: headphones,

@@ -99,7 +99,10 @@ function PerfilPage() {
           <Trophy className="size-5 text-primary mb-2" />
           <p className="font-display text-3xl">{wins}</p>
           <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Prêmios</p>
+        </div>
       </div>
+
+
 
       {(isAdmin || anyAdminExists === false) && (
         <div className="px-5 mb-6">

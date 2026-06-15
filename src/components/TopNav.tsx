@@ -5,8 +5,9 @@ export function TopNav() {
   const count = useCart((s) => s.items.length);
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 max-w-[430px] mx-auto bg-background/80 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-border">
-      <Link to="/" className="font-display text-2xl tracking-tighter italic">
-        LUCKYDROP
+      <Link to="/" className="font-display text-2xl tracking-tighter italic flex items-center gap-1">
+        <span>PREMIÁ</span>
+        <span className="text-primary">.</span>
       </Link>
       <Link
         to="/cart"

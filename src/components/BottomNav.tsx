@@ -19,10 +19,13 @@ export function BottomNav() {
         <Trophy className="size-5" />
         <span className="text-[10px] font-bold uppercase tracking-tight">Carrinho</span>
       </Link>
-      <button className="flex flex-col items-center gap-1 text-muted-foreground">
+      <Link
+        to="/auth"
+        className="flex flex-col items-center gap-1 text-muted-foreground data-[status=active]:text-primary"
+      >
         <User className="size-5" />
         <span className="text-[10px] font-bold uppercase tracking-tight">Perfil</span>
-      </button>
+      </Link>
     </nav>
   );
 }

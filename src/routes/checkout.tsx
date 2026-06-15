@@ -201,9 +201,10 @@ function Checkout() {
       <div className="fixed bottom-0 left-0 right-0 max-w-[430px] mx-auto px-5 pb-6 pt-4 bg-gradient-to-t from-background via-background to-transparent">
         <button
           onClick={pay}
-          className="w-full bg-primary text-primary-foreground font-display text-xl py-5 rounded-2xl shadow-xl shadow-primary/30"
+          disabled={processing}
+          className="w-full bg-primary text-primary-foreground font-display text-xl py-5 rounded-2xl shadow-xl shadow-primary/30 disabled:opacity-60"
         >
-          CONFIRMAR {formatBRL(total)}
+          {processing ? "PROCESSANDO..." : `CONFIRMAR ${formatBRL(total)}`}
         </button>
       </div>
     </div>

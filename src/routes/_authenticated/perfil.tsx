@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { BottomNav } from "@/components/BottomNav";
 import { formatBRL } from "@/lib/products";
-import { LogOut, Trophy, Ticket } from "lucide-react";
+import { useIsAdmin } from "@/lib/use-role";
+import { LogOut, Trophy, Ticket, Shield } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/perfil")({

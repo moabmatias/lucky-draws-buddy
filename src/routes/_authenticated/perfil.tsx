@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { BottomNav } from "@/components/BottomNav";
 import { formatBRL } from "@/lib/products";
-import { LogOut, Trophy, Ticket } from "lucide-react";
+import { useIsAdmin } from "@/lib/use-role";
+import { LogOut, Trophy, Ticket, Shield } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/perfil")({
@@ -28,6 +29,7 @@ type ProfileRow = { full_name: string | null; avatar_url: string | null };
 
 function PerfilPage() {
   const navigate = useNavigate();
+  const { isAdmin, anyAdminExists } = useIsAdmin();
   const [email, setEmail] = useState<string>("");
   const [profile, setProfile] = useState<ProfileRow | null>(null);
   const [tickets, setTickets] = useState<TicketRow[]>([]);
@@ -99,6 +101,29 @@ function PerfilPage() {
           <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Prêmios</p>
         </div>
       </div>
+
+
+
+      {(isAdmin || anyAdminExists === false) && (
+        <div className="px-5 mb-6">
+          <Link
+            to="/admin"
+            className="flex items-center gap-3 rounded-2xl border border-primary/40 bg-primary/5 p-4"
+          >
+            <Shield className="size-5 text-primary" />
+            <div className="flex-1">
+              <p className="font-bold text-sm">
+                {isAdmin ? "Painel administrativo" : "Configurar administrador"}
+              </p>
+              <p className="text-[11px] text-muted-foreground">
+                {isAdmin
+                  ? "Gerenciar prêmios, sorteios e pedidos"
+                  : "Nenhum admin cadastrado — clique para se tornar o primeiro"}
+              </p>
+            </div>
+          </Link>
+        </div>
+      )}
 
       <section className="px-5">
         <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-3">

@@ -7,13 +7,13 @@ import { BottomNav } from "@/components/BottomNav";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "LuckyDrop — Sorteios semanais de produtos premium" },
+      { title: "Premiá — Sorteios semanais de produtos premium" },
       {
         name: "description",
         content:
           "Concorra a motos, smartphones, relógios e mais toda semana. Adicione no carrinho, receba suas dezenas da sorte e pague via PIX ou cartão.",
       },
-      { property: "og:title", content: "LuckyDrop — Sorteios semanais" },
+      { property: "og:title", content: "Premiá — Sorteios semanais" },
       {
         property: "og:description",
         content: "Sorteios semanais de produtos premium. Suas dezenas da sorte em segundos.",

@@ -7,7 +7,7 @@ import { ArrowLeft, QrCode, CreditCard, Wallet, Check } from "lucide-react";
 export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
-      { title: "Pagamento — LuckyDrop" },
+      { title: "Pagamento — Premiá" },
       { name: "description", content: "Finalize sua compra via PIX, crédito ou débito." },
     ],
   }),

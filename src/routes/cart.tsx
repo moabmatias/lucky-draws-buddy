@@ -8,7 +8,7 @@ import { Trash2, ArrowRight, Sparkles } from "lucide-react";
 export const Route = createFileRoute("/cart")({
   head: () => ({
     meta: [
-      { title: "Carrinho — LuckyDrop" },
+      { title: "Carrinho — Premiá" },
       { name: "description", content: "Revise seus bilhetes e dezenas da sorte antes de pagar." },
     ],
   }),

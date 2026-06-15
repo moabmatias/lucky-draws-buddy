@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useCart } from "@/lib/cart-store";
 import { formatBRL } from "@/lib/products";
 import { ArrowLeft, QrCode, CreditCard, Wallet, Check } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
@@ -29,13 +31,51 @@ function Checkout() {
   const navigate = useNavigate();
   const [method, setMethod] = useState<Method>("pix");
   const [done, setDone] = useState(false);
+  const [processing, setProcessing] = useState(false);
 
-  const pay = () => {
-    setDone(true);
-    setTimeout(() => {
-      clear();
-      navigate({ to: "/" });
-    }, 2200);
+  const pay = async () => {
+    if (processing) return;
+    setProcessing(true);
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      if (!userData.user) {
+        toast.error("Entre para finalizar a compra");
+        navigate({ to: "/auth" });
+        return;
+      }
+
+      const totalCents = Math.round(total * 100);
+      const { data: order, error: orderErr } = await supabase
+        .from("orders")
+        .insert({
+          user_id: userData.user.id,
+          total_cents: totalCents,
+          payment_method: method,
+          status: "paid",
+          paid_at: new Date().toISOString(),
+        })
+        .select("id")
+        .single();
+      if (orderErr || !order) throw orderErr ?? new Error("Falha no pedido");
+
+      const ticketRows = items.map((i) => ({
+        user_id: userData.user!.id,
+        product_id: i.product.id,
+        order_id: order.id,
+        numbers: i.numbers,
+      }));
+      const { error: tErr } = await supabase.from("tickets").insert(ticketRows);
+      if (tErr) throw tErr;
+
+      setDone(true);
+      setTimeout(() => {
+        clear();
+        navigate({ to: "/perfil" });
+      }, 2200);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erro ao processar pagamento");
+      setProcessing(false);
+    }
   };
 
   if (done) {
@@ -161,9 +201,10 @@ function Checkout() {
       <div className="fixed bottom-0 left-0 right-0 max-w-[430px] mx-auto px-5 pb-6 pt-4 bg-gradient-to-t from-background via-background to-transparent">
         <button
           onClick={pay}
-          className="w-full bg-primary text-primary-foreground font-display text-xl py-5 rounded-2xl shadow-xl shadow-primary/30"
+          disabled={processing}
+          className="w-full bg-primary text-primary-foreground font-display text-xl py-5 rounded-2xl shadow-xl shadow-primary/30 disabled:opacity-60"
         >
-          CONFIRMAR {formatBRL(total)}
+          {processing ? "PROCESSANDO..." : `CONFIRMAR ${formatBRL(total)}`}
         </button>
       </div>
     </div>

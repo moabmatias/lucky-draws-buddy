@@ -20,7 +20,7 @@ export function BottomNav() {
         <span className="text-[10px] font-bold uppercase tracking-tight">Carrinho</span>
       </Link>
       <Link
-        to="/auth"
+        to="/perfil"
         className="flex flex-col items-center gap-1 text-muted-foreground data-[status=active]:text-primary"
       >
         <User className="size-5" />

@@ -14,16 +14,209 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      orders: {
+        Row: {
+          created_at: string
+          external_reference: string | null
+          id: string
+          paid_at: string | null
+          payment_method: Database["public"]["Enums"]["payment_method"] | null
+          status: Database["public"]["Enums"]["order_status"]
+          total_cents: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          external_reference?: string | null
+          id?: string
+          paid_at?: string | null
+          payment_method?: Database["public"]["Enums"]["payment_method"] | null
+          status?: Database["public"]["Enums"]["order_status"]
+          total_cents: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          external_reference?: string | null
+          id?: string
+          paid_at?: string | null
+          payment_method?: Database["public"]["Enums"]["payment_method"] | null
+          status?: Database["public"]["Enums"]["order_status"]
+          total_cents?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          created_at: string
+          description: string | null
+          draw_date: string
+          id: string
+          image_url: string | null
+          name: string
+          retail_value_cents: number | null
+          sold_tickets: number
+          status: Database["public"]["Enums"]["product_status"]
+          ticket_price_cents: number
+          total_tickets: number
+          updated_at: string
+          winner_ticket_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          draw_date: string
+          id?: string
+          image_url?: string | null
+          name: string
+          retail_value_cents?: number | null
+          sold_tickets?: number
+          status?: Database["public"]["Enums"]["product_status"]
+          ticket_price_cents: number
+          total_tickets?: number
+          updated_at?: string
+          winner_ticket_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          draw_date?: string
+          id?: string
+          image_url?: string | null
+          name?: string
+          retail_value_cents?: number | null
+          sold_tickets?: number
+          status?: Database["public"]["Enums"]["product_status"]
+          ticket_price_cents?: number
+          total_tickets?: number
+          updated_at?: string
+          winner_ticket_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_winner_ticket_fkey"
+            columns: ["winner_ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      tickets: {
+        Row: {
+          created_at: string
+          id: string
+          is_winner: boolean
+          numbers: number[]
+          order_id: string
+          product_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_winner?: boolean
+          numbers: number[]
+          order_id: string
+          product_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_winner?: boolean
+          numbers?: number[]
+          order_id?: string
+          product_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tickets_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tickets_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
+      order_status: "pending" | "paid" | "failed" | "cancelled"
+      payment_method: "pix" | "credit" | "debit"
+      product_status: "draft" | "active" | "drawn" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +343,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+      order_status: ["pending", "paid", "failed", "cancelled"],
+      payment_method: ["pix", "credit", "debit"],
+      product_status: ["draft", "active", "drawn", "cancelled"],
+    },
   },
 } as const

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
+  ssr: false,
   head: () => ({
     meta: [
       { title: "Entrar — Premiá" },
@@ -126,7 +127,7 @@ function AuthPage() {
           : "Suas dezenas, seus prêmios."}
       </p>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+      <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-3">
         {mode === "signup" && (
           <Input
             placeholder="Nome completo"

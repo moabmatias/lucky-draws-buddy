@@ -40,6 +40,16 @@ function AuthPage() {
     e.preventDefault();
     setFeedback(null);
 
+    if (!email.trim() || (mode === "signup" && !name.trim()) || (mode !== "forgot" && !password)) {
+      setFeedback({ type: "error", message: "Preencha todos os campos para continuar." });
+      return;
+    }
+
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      setFeedback({ type: "error", message: "Informe um endereço de e-mail válido." });
+      return;
+    }
+
     if (mode === "signup" && password.length < 8) {
       setFeedback({ type: "error", message: "Crie uma senha com pelo menos 8 caracteres, misturando letras, números e símbolos." });
       return;
@@ -127,13 +137,12 @@ function AuthPage() {
           : "Suas dezenas, seus prêmios."}
       </p>
 
-      <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-3">
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
         {mode === "signup" && (
           <Input
             placeholder="Nome completo"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            required
             className="h-12"
           />
         )}
@@ -142,7 +151,6 @@ function AuthPage() {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          required
           className="h-12"
         />
         {mode !== "forgot" && (
@@ -152,8 +160,6 @@ function AuthPage() {
               placeholder="Senha"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={mode === "signup" ? 8 : 6}
               autoComplete={mode === "signup" ? "new-password" : "current-password"}
               className="h-12"
             />

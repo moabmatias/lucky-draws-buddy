@@ -2,6 +2,7 @@ import moto from "@/assets/product-moto.jpg";
 import watch from "@/assets/product-watch.jpg";
 import phone from "@/assets/product-phone.jpg";
 import headphones from "@/assets/product-headphones.jpg";
+import pixMoneyAsset from "@/assets/pix-money.webp.asset.json";
 
 export type Product = {
   id: string;
@@ -18,7 +19,7 @@ export const products: Product[] = [
     id: "11111111-1111-1111-1111-111111111111",
     name: "PIX DE R$ 20,00",
     tagline: "Prêmio instantâneo em dinheiro",
-    image: "https://images.unsplash.com/photo-1621933486609-2d876c1f99d9?q=80&w=1000&auto=format&fit=crop",
+    image: pixMoneyAsset.url,
     ticketPrice: 2.0,
     remaining: 142,
     drawDay: "SORTEIO SÁBADO",

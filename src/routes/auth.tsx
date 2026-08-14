@@ -5,6 +5,8 @@ import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { PasswordStrength, evaluatePassword } from "@/components/PasswordStrength";
+
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -50,10 +52,17 @@ function AuthPage() {
       return;
     }
 
-    if (mode === "signup" && password.length < 8) {
-      setFeedback({ type: "error", message: "Crie uma senha com pelo menos 8 caracteres, misturando letras, números e símbolos." });
-      return;
+    if (mode === "signup") {
+      const strength = evaluatePassword(password);
+      if (password.length < 8 || strength.score < 2) {
+        setFeedback({
+          type: "error",
+          message: `Senha ${strength.label.toLowerCase()}. ${strength.tips.join(". ") || "Use letras, números e símbolos."}`,
+        });
+        return;
+      }
     }
+
 
     setLoading(true);
     try {
@@ -163,9 +172,8 @@ function AuthPage() {
               autoComplete={mode === "signup" ? "new-password" : "current-password"}
               className="h-12"
             />
-            {mode === "signup" && (
-              <p className="px-1 text-xs text-muted-foreground">Use 8 ou mais caracteres e evite senhas comuns ou já utilizadas.</p>
-            )}
+            {mode === "signup" && <PasswordStrength password={password} />}
+
           </div>
         )}
         {feedback && (

@@ -60,6 +60,7 @@ function AuthPage() {
         setMode("signin");
       }
     } catch (err) {
+      console.error("Auth error:", err);
       toast.error(err instanceof Error ? err.message : "Erro inesperado");
     } finally {
       setLoading(false);

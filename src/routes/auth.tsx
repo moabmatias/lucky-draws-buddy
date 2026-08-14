@@ -7,10 +7,15 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
+  ssr: false,
   head: () => ({
     meta: [
       { title: "Entrar — Premiá" },
       { name: "description", content: "Acesse sua conta Premiá para participar dos sorteios semanais." },
+      { property: "og:title", content: "Entrar — Premiá" },
+      { property: "og:description", content: "Acesse sua conta Premiá para participar dos sorteios semanais." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: AuthPage,
@@ -23,6 +28,7 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [feedback, setFeedback] = useState<{ type: "error" | "success"; message: string } | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
@@ -30,8 +36,25 @@ function AuthPage() {
     });
   }, [navigate]);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleSubmit(e?: React.FormEvent) {
+    e?.preventDefault();
+    setFeedback(null);
+
+    if (!email.trim() || (mode === "signup" && !name.trim()) || (mode !== "forgot" && !password)) {
+      setFeedback({ type: "error", message: "Preencha todos os campos para continuar." });
+      return;
+    }
+
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      setFeedback({ type: "error", message: "Informe um endereço de e-mail válido." });
+      return;
+    }
+
+    if (mode === "signup" && password.length < 8) {
+      setFeedback({ type: "error", message: "Crie uma senha com pelo menos 8 caracteres, misturando letras, números e símbolos." });
+      return;
+    }
+
     setLoading(true);
     try {
       if (mode === "signin") {
@@ -40,7 +63,7 @@ function AuthPage() {
         toast.success("Boa sorte!");
         navigate({ to: "/" });
       } else if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
@@ -49,8 +72,12 @@ function AuthPage() {
           },
         });
         if (error) throw error;
-        toast.success("Conta criada! Verifique seu email se necessário.");
-        navigate({ to: "/" });
+        if (data.session) {
+          toast.success("Conta criada com sucesso!");
+          navigate({ to: "/" });
+        } else {
+          setFeedback({ type: "success", message: "Conta criada. Abra o e-mail de confirmação enviado para concluir o cadastro." });
+        }
       } else {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
           redirectTo: `${window.location.origin}/reset-password`,
@@ -61,7 +88,19 @@ function AuthPage() {
       }
     } catch (err) {
       console.error("Auth error:", err);
-      toast.error(err instanceof Error ? err.message : "Erro inesperado");
+      const code = typeof err === "object" && err !== null && "code" in err ? String(err.code) : "";
+      const message =
+        code === "weak_password"
+          ? "Essa senha é conhecida como fraca ou vazada. Escolha uma senha nova, com letras, números e símbolos."
+          : code === "user_already_exists"
+            ? "Já existe uma conta com este e-mail. Entre ou recupere sua senha."
+            : code === "invalid_credentials"
+              ? "E-mail ou senha inválidos. Confira os dados ou recupere sua senha."
+              : err instanceof Error
+                ? err.message
+                : "Não foi possível concluir. Tente novamente.";
+      setFeedback({ type: "error", message });
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -104,7 +143,6 @@ function AuthPage() {
             placeholder="Nome completo"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            required
             className="h-12"
           />
         )}
@@ -113,21 +151,37 @@ function AuthPage() {
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          required
           className="h-12"
         />
         {mode !== "forgot" && (
-          <Input
-            type="password"
-            placeholder="Senha"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            minLength={6}
-            className="h-12"
-          />
+          <div className="space-y-1.5">
+            <Input
+              type="password"
+              placeholder="Senha"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete={mode === "signup" ? "new-password" : "current-password"}
+              className="h-12"
+            />
+            {mode === "signup" && (
+              <p className="px-1 text-xs text-muted-foreground">Use 8 ou mais caracteres e evite senhas comuns ou já utilizadas.</p>
+            )}
+          </div>
         )}
-        <Button type="submit" disabled={loading} className="h-12 text-base font-bold">
+        {feedback && (
+          <p
+            role={feedback.type === "error" ? "alert" : "status"}
+            className={feedback.type === "error" ? "rounded-md border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive" : "rounded-md border border-primary/40 bg-primary/10 p-3 text-sm text-foreground"}
+          >
+            {feedback.message}
+          </p>
+        )}
+        <Button
+          type="button"
+          disabled={loading}
+          onClick={() => void handleSubmit()}
+          className="h-12 text-base font-bold"
+        >
           {loading
             ? "..."
             : mode === "signin"
@@ -161,39 +215,43 @@ function AuthPage() {
       <div className="mt-8 text-center text-sm space-y-2">
         {mode === "signin" && (
           <>
-            <button
+            <Button
               type="button"
               onClick={() => setMode("forgot")}
-              className="text-muted-foreground hover:text-foreground block w-full"
+              variant="link"
+              className="h-auto w-full text-muted-foreground"
             >
               Esqueci minha senha
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               onClick={() => setMode("signup")}
-              className="text-primary font-semibold"
+              variant="link"
+              className="h-auto font-semibold"
             >
               Não tem conta? Cadastre-se
-            </button>
+            </Button>
           </>
         )}
         {mode === "signup" && (
-          <button
+          <Button
             type="button"
             onClick={() => setMode("signin")}
-            className="text-primary font-semibold"
+            variant="link"
+            className="h-auto font-semibold"
           >
             Já tem conta? Entrar
-          </button>
+          </Button>
         )}
         {mode === "forgot" && (
-          <button
+          <Button
             type="button"
             onClick={() => setMode("signin")}
-            className="text-primary font-semibold"
+            variant="link"
+            className="h-auto font-semibold"
           >
             Voltar para o login
-          </button>
+          </Button>
         )}
       </div>
     </div>

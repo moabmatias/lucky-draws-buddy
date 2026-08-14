@@ -163,9 +163,8 @@ function AuthPage() {
               autoComplete={mode === "signup" ? "new-password" : "current-password"}
               className="h-12"
             />
-            {mode === "signup" && (
-              <p className="px-1 text-xs text-muted-foreground">Use 8 ou mais caracteres e evite senhas comuns ou já utilizadas.</p>
-            )}
+            {mode === "signup" && <PasswordStrength password={password} />}
+
           </div>
         )}
         {feedback && (

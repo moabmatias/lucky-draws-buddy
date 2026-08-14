@@ -2,6 +2,7 @@ import moto from "@/assets/product-moto.jpg";
 import watch from "@/assets/product-watch.jpg";
 import phone from "@/assets/product-phone.jpg";
 import headphones from "@/assets/product-headphones.jpg";
+import pixMoneyAsset from "@/assets/pix-money.webp.asset.json";
 
 export type Product = {
   id: string;

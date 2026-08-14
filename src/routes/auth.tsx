@@ -36,8 +36,8 @@ function AuthPage() {
     });
   }, [navigate]);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleSubmit(e?: React.FormEvent) {
+    e?.preventDefault();
     setFeedback(null);
 
     if (!email.trim() || (mode === "signup" && !name.trim()) || (mode !== "forgot" && !password)) {
@@ -176,7 +176,12 @@ function AuthPage() {
             {feedback.message}
           </p>
         )}
-        <Button type="submit" disabled={loading} className="h-12 text-base font-bold">
+        <Button
+          type="button"
+          disabled={loading}
+          onClick={() => void handleSubmit()}
+          className="h-12 text-base font-bold"
+        >
           {loading
             ? "..."
             : mode === "signin"
